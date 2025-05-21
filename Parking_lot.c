@@ -12,10 +12,10 @@ sbit Bot_2 = P3^3;
 sbit Sensor = P1^4;
 
 // Display
-sbit A = P2^0;
-sbit B = P2^1;
-sbit C = P2^2;
-sbit D = P2^3;
+sbit Display_A = P2^0;
+sbit Display_B = P2^1;
+sbit Display_C = P2^2;
+sbit Display_D = P2^3;
 
 // Sensor and LEDs on the parking spots
 sbit S1_L1 = P0^0;
@@ -27,27 +27,32 @@ sbit S6_L6 = P0^5;
 sbit S7_L7 = P0^6;
 sbit S8_L8 = P0^7;
 
-int void main() {
+unsigned int park_states;	// unsingned chr 8 bits, meaning P0.0 .. P0.7
+unsigned int occupied;
+unsigned int available_park;
+unsigned int i;
+
+
+void awaitCar();
+void delay_10s();
+
+void main(){
 	// _init_ the pins
 	P0 = 0xff;
 	P1 = 0xff;
 	P2 = 0xff;
 	P3 = 0xff;
 	
-	unsigned char park_states;	// unsingned char 8 bits, meaning P0.0 .. P0.7
-	unsigned char occupied;
-	unsigned char available _park;
-	
-	while(1) {		// main loop
+	while(1){		// main loop
 		park_states = P0; // assign P0 to a readable var
 		
 		// Verify the available parking spots and sends it o the Display
 		occupied = 0;
 		
-		for(unsigned char i = 0; i < 8; i++) {
+		for(i = 0; i < 8; i++){
 			// if park_states and bit[i], then a spot is occupied and 
 			// i is the occupied slot.
-			if(park_states & (1 << i)) {
+			if(park_states & (1 << i)){
 				occupied++;
 			}
 		}
@@ -57,16 +62,51 @@ int void main() {
 		P2 = available_park; // This sends only the 4 bits necessary for the Display A-D
 		
 		// if there are any parking slots available Green else Red
-		if(available_park > 0) {
+		if(available_park > 0){
 			Green = 1;
 			Red = 0;
 		} else {
 			Green = 0;
 			Red = 1;
 		}
-	
-		if(Sensor & !Red)
+		// assuming from the assignment there is only one way to enter / exit
+		if(Bot_1 & Green){	// if button 1 -> entry Light must be green also
+			awaitCar();
+		} else if(Bot_2){	// if button 2 -> exit light does not matter 
+			awaitCar();
+		}
 		
 	}
 	
+}
+
+void awaitCar(){
+	Barr = 1;
+	Yellow = 1;
+	while(!Sensor);// await sensor response
+	delay_10s();
+	Barr = 0;
+	Yellow = 0;
+
+}
+
+void delay_10s(){
+	unsigned int intervals = 200;	// 200 & 50ms = 10s
+	
+	TMOD = (TMOD & 0xf0) | 0x01;	// configuration of the built in timer 0
+	
+	while(intervals > 0){
+		// 0x3cb0
+		TH0 = 0x3c;	// low byte
+		TL0 = 0xb0;	// high byte
+		
+		TR0 = 1; // start the timer
+		
+		while(!TF0); // await overflow ?
+		
+		TF0 = 0;
+		TR0 = 0;
+		
+		intervals--;
+	}
 }
