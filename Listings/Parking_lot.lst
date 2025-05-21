@@ -1,0 +1,140 @@
+C51 COMPILER V9.60.7.0   PARKING_LOT                                                       05/21/2025 16:58:41 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE PARKING_LOT
+OBJECT MODULE PLACED IN .\Objects\Parking_lot.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Parking_lot.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listin
+                    -gs\Parking_lot.lst) TABS(2) OBJECT(.\Objects\Parking_lot.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          // Actuatures
+   4          sbit Green = P1^0;
+   5          sbit Red = P1^1;
+   6          sbit Yellow = P1^2;
+   7          sbit Barr = P1^3;
+   8          
+   9          // Sensors
+  10          sbit Bot_1 = P3^2;
+  11          sbit Bot_2 = P3^3;
+  12          sbit Sensor = P1^4;
+  13          
+  14          // Display
+  15          sbit Display_A = P2^0;
+  16          sbit Display_B = P2^1;
+  17          sbit Display_C = P2^2;
+  18          sbit Display_D = P2^3;
+  19          
+  20          // Sensor and LEDs on the parking spots
+  21          sbit S1_L1 = P0^0;
+  22          sbit S2_L2 = P0^1;
+  23          sbit S3_L3 = P0^2;
+  24          sbit S4_L4 = P0^3;
+  25          sbit S5_L5 = P0^4;
+  26          sbit S6_L6 = P0^5;
+  27          sbit S7_L7 = P0^6;
+  28          sbit S8_L8 = P0^7;
+  29          
+  30          unsigned int park_states; // unsingned chr 8 bits, meaning P0.0 .. P0.7
+  31          unsigned int occupied;
+  32          unsigned int available_park;
+  33          unsigned int i;
+  34          
+  35          
+  36          void awaitCar();
+  37          void delay_10s();
+  38          
+  39          void main(){
+  40   1        // _init_ the pins
+  41   1        P0 = 0xff;
+  42   1        P1 = 0xff;
+  43   1        P2 = 0xff;
+  44   1        P3 = 0xff;
+  45   1        
+  46   1        while(1){   // main loop
+  47   2          park_states = P0; // assign P0 to a readable var
+  48   2          
+  49   2          // Verify the available parking spots and sends it o the Display
+  50   2          occupied = 0;
+  51   2          
+  52   2          for(i = 0; i < 8; i++){
+  53   3            // if park_states and bit[i], then a spot is occupied and 
+  54   3            // i is the occupied slot.
+C51 COMPILER V9.60.7.0   PARKING_LOT                                                       05/21/2025 16:58:41 PAGE 2   
+
+  55   3            if(park_states & (1 << i)){
+  56   4              occupied++;
+  57   4            }
+  58   3          }
+  59   2      
+  60   2          available_park = 8 - occupied;  // results in the display code for the decoder
+  61   2          available_park &= 0x0f; // keeps at 4 bits since the full 8 are not used
+  62   2          P2 = available_park; // This sends only the 4 bits necessary for the Display A-D
+  63   2          
+  64   2          // if there are any parking slots available Green else Red
+  65   2          if(available_park > 0){
+  66   3            Green = 1;
+  67   3            Red = 0;
+  68   3          } else {
+  69   3            Green = 0;
+  70   3            Red = 1;
+  71   3          }
+  72   2          // assuming from the assignment there is only one way to enter / exit
+  73   2          if(Bot_1 & Green){  // if button 1 -> entry Light must be green also
+  74   3            awaitCar();
+  75   3          } else if(Bot_2){ // if button 2 -> exit light does not matter 
+  76   3            awaitCar();
+  77   3          }
+  78   2          
+  79   2        }
+  80   1        
+  81   1      }
+  82          
+  83          void awaitCar(){
+  84   1        Barr = 1;
+  85   1        Yellow = 1;
+  86   1        while(!Sensor);// await sensor response
+  87   1        delay_10s();
+  88   1        Barr = 0;
+  89   1        Yellow = 0;
+  90   1      
+  91   1      }
+  92          
+  93          void delay_10s(){
+  94   1        unsigned int intervals = 200; // 200 & 50ms = 10s
+  95   1        
+  96   1        TMOD = (TMOD & 0xf0) | 0x01;  // configuration of the built in timer 0
+  97   1        
+  98   1        while(intervals > 0){
+  99   2          // 0x3cb0
+ 100   2          TH0 = 0x3c; // low byte
+ 101   2          TL0 = 0xb0; // high byte
+ 102   2          
+ 103   2          TR0 = 1; // start the timer
+ 104   2          
+ 105   2          while(!TF0); // await overflow ?
+ 106   2          
+ 107   2          TF0 = 0;
+ 108   2          TR0 = 0;
+ 109   2          
+ 110   2          intervals--;
+ 111   2        }
+ 112   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    190    ----
+C51 COMPILER V9.60.7.0   PARKING_LOT                                                       05/21/2025 16:58:41 PAGE 3   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

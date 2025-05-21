@@ -1,0 +1,157 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/21/2025  16:58:41  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\Parking_lot.obj TO .\Objects\Trabalho_3_c_ARM_ASM PRINT (.\Listings\Trabalho_3_c_A
+>> RM_ASM.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\Parking_lot.obj (PARKING_LOT)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  .\Objects\Trabalho_3_c_ARM_ASM (PARKING_LOT)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0008H     UNIT         ?DT?PARKING_LOT
+            IDATA   0010H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     008AH     UNIT         ?PR?MAIN?PARKING_LOT
+            CODE    088AH     0025H     UNIT         ?PR?DELAY_10S?PARKING_LOT
+            CODE    08AFH     000FH     UNIT         ?PR?AWAITCAR?PARKING_LOT
+            CODE    08BEH     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\Trabalho_3_c_ARM_ASM (PARKING_LOT)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?PARKING_LOT
+
+?PR?MAIN?PARKING_LOT
+  +--> ?PR?AWAITCAR?PARKING_LOT
+
+?PR?AWAITCAR?PARKING_LOT
+  +--> ?PR?DELAY_10S?PARKING_LOT
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\Trabalho_3_c_ARM_ASM (PARKING_LOT)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        PARKING_LOT
+  C:0000H         SYMBOL        _ICE_DUMMY_
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/21/2025  16:58:41  PAGE 2
+
+
+  B:0090H.2       PUBLIC        Yellow
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  B:0090H.3       PUBLIC        Barr
+  B:0090H.1       PUBLIC        Red
+  C:0800H         PUBLIC        main
+  D:0008H         PUBLIC        park_states
+  C:08AFH         PUBLIC        awaitCar
+  D:0089H         PUBLIC        TMOD
+  B:00B0H.2       PUBLIC        Bot_1
+  D:000AH         PUBLIC        available_park
+  B:00B0H.3       PUBLIC        Bot_2
+  C:088AH         PUBLIC        delay_10s
+  B:0088H.5       PUBLIC        TF0
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  D:000CH         PUBLIC        occupied
+  B:0088H.4       PUBLIC        TR0
+  D:000EH         PUBLIC        i
+  B:0090H.0       PUBLIC        Green
+  B:0090H.4       PUBLIC        Sensor
+  -------         PROC          MAIN
+  C:0800H         LINE#         39
+  C:0800H         LINE#         41
+  C:0803H         LINE#         42
+  C:0806H         LINE#         43
+  C:0809H         LINE#         44
+  C:080CH         LINE#         46
+  C:080CH         LINE#         47
+  C:0813H         LINE#         50
+  C:0818H         LINE#         52
+  C:081CH         LINE#         55
+  C:0837H         LINE#         56
+  C:083FH         LINE#         57
+  C:083FH         LINE#         58
+  C:084DH         LINE#         60
+  C:0859H         LINE#         61
+  C:085FH         LINE#         62
+  C:0862H         LINE#         65
+  C:086DH         LINE#         66
+  C:086FH         LINE#         67
+  C:0871H         LINE#         68
+  C:0873H         LINE#         69
+  C:0875H         LINE#         70
+  C:0877H         LINE#         71
+  C:0877H         LINE#         73
+  C:087DH         LINE#         74
+  C:0880H         LINE#         75
+  C:0885H         LINE#         76
+  C:0888H         LINE#         77
+  C:0888H         LINE#         79
+  -------         ENDPROC       MAIN
+  -------         PROC          AWAITCAR
+  C:08AFH         LINE#         83
+  C:08AFH         LINE#         84
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/21/2025  16:58:41  PAGE 3
+
+
+  C:08B1H         LINE#         85
+  C:08B3H         LINE#         86
+  C:08B6H         LINE#         87
+  C:08B9H         LINE#         88
+  C:08BBH         LINE#         89
+  C:08BDH         LINE#         91
+  -------         ENDPROC       AWAITCAR
+  -------         PROC          DELAY_10S
+  -------         DO            
+  D:0006H         SYMBOL        intervals
+  -------         ENDDO         
+  C:088AH         LINE#         93
+  C:088AH         LINE#         94
+  C:088EH         LINE#         96
+  C:0896H         LINE#         98
+  C:0896H         LINE#         100
+  C:0899H         LINE#         101
+  C:089CH         LINE#         103
+  C:089EH         LINE#         105
+  C:08A1H         LINE#         107
+  C:08A3H         LINE#         108
+  C:08A5H         LINE#         110
+  C:08AAH         LINE#         111
+  C:08AEH         LINE#         112
+  -------         ENDPROC       DELAY_10S
+  -------         ENDMOD        PARKING_LOT
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00BEH BYTE ( 9%) *
+******************************************************************************
+
+Program Size: data=17.0 xdata=0 code=205
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
