@@ -1,140 +1,179 @@
-C51 COMPILER V9.60.7.0   PARKING_LOT                                                       05/21/2025 16:58:41 PAGE 1   
+A51 MACRO ASSEMBLER  PARKING_LOT                                                          05/21/2025 22:31:09 PAGE     1
 
 
-C51 COMPILER V9.60.7.0, COMPILATION OF MODULE PARKING_LOT
-OBJECT MODULE PLACED IN .\Objects\Parking_lot.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE Parking_lot.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listin
-                    -gs\Parking_lot.lst) TABS(2) OBJECT(.\Objects\Parking_lot.obj)
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\Parking_Lot.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE Parking_Lot.a51 SET(SMALL) DEBUG PRINT(.\Listings\Parking_Lot.lst) OBJE
+                      CT(.\Objects\Parking_Lot.obj) EP
 
-line level    source
+LOC  OBJ            LINE     SOURCE
 
-   1          #include <reg51.h>
-   2          
-   3          // Actuatures
-   4          sbit Green = P1^0;
-   5          sbit Red = P1^1;
-   6          sbit Yellow = P1^2;
-   7          sbit Barr = P1^3;
-   8          
-   9          // Sensors
-  10          sbit Bot_1 = P3^2;
-  11          sbit Bot_2 = P3^3;
-  12          sbit Sensor = P1^4;
-  13          
-  14          // Display
-  15          sbit Display_A = P2^0;
-  16          sbit Display_B = P2^1;
-  17          sbit Display_C = P2^2;
-  18          sbit Display_D = P2^3;
-  19          
-  20          // Sensor and LEDs on the parking spots
-  21          sbit S1_L1 = P0^0;
-  22          sbit S2_L2 = P0^1;
-  23          sbit S3_L3 = P0^2;
-  24          sbit S4_L4 = P0^3;
-  25          sbit S5_L5 = P0^4;
-  26          sbit S6_L6 = P0^5;
-  27          sbit S7_L7 = P0^6;
-  28          sbit S8_L8 = P0^7;
-  29          
-  30          unsigned int park_states; // unsingned chr 8 bits, meaning P0.0 .. P0.7
-  31          unsigned int occupied;
-  32          unsigned int available_park;
-  33          unsigned int i;
-  34          
-  35          
-  36          void awaitCar();
-  37          void delay_10s();
-  38          
-  39          void main(){
-  40   1        // _init_ the pins
-  41   1        P0 = 0xff;
-  42   1        P1 = 0xff;
-  43   1        P2 = 0xff;
-  44   1        P3 = 0xff;
-  45   1        
-  46   1        while(1){   // main loop
-  47   2          park_states = P0; // assign P0 to a readable var
-  48   2          
-  49   2          // Verify the available parking spots and sends it o the Display
-  50   2          occupied = 0;
-  51   2          
-  52   2          for(i = 0; i < 8; i++){
-  53   3            // if park_states and bit[i], then a spot is occupied and 
-  54   3            // i is the occupied slot.
-C51 COMPILER V9.60.7.0   PARKING_LOT                                                       05/21/2025 16:58:41 PAGE 2   
+                       1     
+                       2     ; Atuadores
+  0090                 3     Green       BIT P1.0
+  0091                 4     Red             BIT P1.1
+  0092                 5     Yellow          BIT P1.2
+  0093                 6     Barr            BIT P1.3
+                       7     
+                       8     ; Sensores
+  00B2                 9     Bot_1           BIT P3.2
+  00B3                10     Bot_2           BIT P3.3
+  0094                11     Sensor          BIT P1.4
+                      12     
+                      13     ; Display
+  00A0                14     Display_A       BIT     P2.0
+  00A1                15     Display_B       BIT     P2.1
+  00A2                16     Display_C       BIT     P2.2
+  00A3                17     Display_D       BIT     P2.3
+                      18             
+                      19     ; Sensores de presenca e sinalizacao
+  0080                20     S1                      BIT P0.0
+  0081                21     S2                      BIT P0.1
+  0082                22     S3                      BIT P0.2
+  0083                23     S4                      BIT P0.3
+  0084                24     S5                      BIT P0.4
+  0085                25     S6                      BIT P0.5
+  0086                26     S7                      BIT P0.6
+  0087                27     S8                      BIT P0.7
+                      28     
+                      29     
+0000                  30     org     0000h
+0000                  31     InitVals:
+0000 85FF80           32             mov     P0, 0ffh                        ;Set the pins of the parking spots to 0
+0003 85FF90           33             mov     P1, 0ffh                        ;Actuators set to 0
+0006 85FFA0           34             mov     P2, 0ffh                        ;Display 0 at the begining
+0009 85FFB0           35             mov     P3, 0ffh                        ;Interaction Peripherals set to 0
+                      36     
+000C                  37     MainLoop:
+000C E580             38             mov     A, P0                   ;Park_states(accumulator)
+000E A800             39             mov     r0, 0                   ;Occupied
+                      40             
+0010                  41     countOccupied:
+0010 A908             42             mov     r1, 8                   ;Number of slots available
+0012                  43     countLoop:
+0012 23               44             rl              A                               ;Rotate left to verify each bit L t
+                             o R
+0013 5001             45             jnc     nextBit                 ;Skip if the bit is 0
+0015 08               46             inc     r0                              ;Increment r0 occupied
+0016                  47     nextBit:
+0016 D9FA             48             djnz    r1, countLoop   ;Decrement r1 and jump to loop if not 0
+                      49             
+0018 E508             50             mov     A, 8                    ;8 slots to park
+001A C3               51             clr     C                               ;Clear the carry bit from RL
+001B 98               52             subb    A, r0                   ;Subtract r0 occupied from A 8 slots to get availab
+                             le_park
+001C F5A0             53             mov     P2, A                   ;Present Display
+                      54             
+001E 6006             55             jz              FullPark        ;If there are no slots its full jump to routine to 
+A51 MACRO ASSEMBLER  PARKING_LOT                                                          05/21/2025 22:31:09 PAGE     2
 
-  55   3            if(park_states & (1 << i)){
-  56   4              occupied++;
-  57   4            }
-  58   3          }
-  59   2      
-  60   2          available_park = 8 - occupied;  // results in the display code for the decoder
-  61   2          available_park &= 0x0f; // keeps at 4 bits since the full 8 are not used
-  62   2          P2 = available_park; // This sends only the 4 bits necessary for the Display A-D
-  63   2          
-  64   2          // if there are any parking slots available Green else Red
-  65   2          if(available_park > 0){
-  66   3            Green = 1;
-  67   3            Red = 0;
-  68   3          } else {
-  69   3            Green = 0;
-  70   3            Red = 1;
-  71   3          }
-  72   2          // assuming from the assignment there is only one way to enter / exit
-  73   2          if(Bot_1 & Green){  // if button 1 -> entry Light must be green also
-  74   3            awaitCar();
-  75   3          } else if(Bot_2){ // if button 2 -> exit light does not matter 
-  76   3            awaitCar();
-  77   3          }
-  78   2          
-  79   2        }
-  80   1        
-  81   1      }
-  82          
-  83          void awaitCar(){
-  84   1        Barr = 1;
-  85   1        Yellow = 1;
-  86   1        while(!Sensor);// await sensor response
-  87   1        delay_10s();
-  88   1        Barr = 0;
-  89   1        Yellow = 0;
-  90   1      
-  91   1      }
-  92          
-  93          void delay_10s(){
-  94   1        unsigned int intervals = 200; // 200 & 50ms = 10s
-  95   1        
-  96   1        TMOD = (TMOD & 0xf0) | 0x01;  // configuration of the built in timer 0
-  97   1        
-  98   1        while(intervals > 0){
-  99   2          // 0x3cb0
- 100   2          TH0 = 0x3c; // low byte
- 101   2          TL0 = 0xb0; // high byte
- 102   2          
- 103   2          TR0 = 1; // start the timer
- 104   2          
- 105   2          while(!TF0); // await overflow ?
- 106   2          
- 107   2          TF0 = 0;
- 108   2          TR0 = 0;
- 109   2          
- 110   2          intervals--;
- 111   2        }
- 112   1      }
+                             handle
+                      56     
+0020                  57     FreePark:
+0020 D290             58             setb    Green                   ;Green light on
+0022 C291             59             clr     Red                             ;Red light off
+0024 8006             60             jmp     testButtons             ;Verify if the buttons are pressed
+0026                  61     FullPark:
+0026 C290             62             clr     Green                   ;Green light off
+0028 D291             63             setb    Red                             ;Red light on
+002A 8000             64             jmp     testButtons             ;Verify if the buttons are pressed
+                      65                     
+002C                  66     testButtons:
+002C                  67     testBot1:
+002C 30B205           68             jnb             Bot_1, testBot2 ;Test button2 if button1 is off
+002F 309007           69             jnb             Green, LoopBack ;Ignore the rest if the Green Light is not one (mea
+                             ning Red light is on, no space)
+0032 8007             70             jmp             awaitCar                ;Await the car to enter the sensor range
+0034                  71     testBot2:
+0034 30B302           72             jnb             Bot_2, LoopBack ;Ignore if button2 is not pressed
+0037 8002             73             jmp             awaitCar                ;Await the car to enter the sensor range
+0039                  74     LoopBack:
+0039 80D1             75             jmp     MainLoop                ;Loop back to continue reading the signals
+                      76     
+003B                  77     awaitCar:                                       ;Routine to detect if the car is in the sen
+                             sor range to pass the barrier
+003B D293             78             setb    Barr                    ;Set barrier on
+003D D292             79             setb    Yellow                  ;Yellow light on
+003F 3094FD           80             jnb             Sensor, $               ;Await sensor
+                      81             ; Delay 10s
+0042 12004B           82             lcall   delay10s
+0045 C293             83             clr             Barr                    ;Set barrier off
+0047 C292             84             clr             Yellow                  ;Yellow light off
+0049 80EE             85             jmp             LoopBack
+                      86             
+004B                  87     delay10s:
+004B C0E0             88         push        ACC             ;Save accumulator
+004D C0D0             89         push        PSW             ;Save program status word
+004F AAC8             90         mov         R2, 200         ;200 intervals of 50 ms
+0051                  91     delayLoop:
+0051 850189           92         mov         TMOD, 01h       ;Timer 0, Mode 1
+0054 853C8C           93         mov         TH0, 0x3C       ;Load 50 ms delay
+0057 85B08A           94         mov         TL0, 0xB0
+005A D28C             95         setb        TR0             ;Start Timer 0
+005C 308DFD           96         jnb         TF0, $          ;Wait for overflow
+005F C28D             97         clr         TF0             ;Clear overflow flag
+0061 C28C             98         clr         TR0             ;Stop Timer 0
+0063 DAEC             99         djnz        R2, delayLoop   ;Decrement and loop if not zero
+0065 D0D0            100         pop         PSW             ;Restore PSW
+0067 D0E0            101         pop         ACC             ;Restore accumulator
+0069 22              102         RET
+                     103     
+                     104     END
+A51 MACRO ASSEMBLER  PARKING_LOT                                                          05/21/2025 22:31:09 PAGE     3
 
-
-MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    190    ----
-C51 COMPILER V9.60.7.0   PARKING_LOT                                                       05/21/2025 16:58:41 PAGE 3   
-
-   CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =   ----    ----
-   PDATA SIZE       =   ----    ----
-   DATA SIZE        =      8    ----
-   IDATA SIZE       =   ----    ----
-   BIT SIZE         =   ----    ----
-END OF MODULE INFORMATION.
+SYMBOL TABLE LISTING
+------ ----- -------
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+AWAITCAR . . . . .  C ADDR   003BH   A   
+BARR . . . . . . .  B ADDR   0090H.3 A   
+BOT_1. . . . . . .  B ADDR   00B0H.2 A   
+BOT_2. . . . . . .  B ADDR   00B0H.3 A   
+COUNTLOOP. . . . .  C ADDR   0012H   A   
+COUNTOCCUPIED. . .  C ADDR   0010H   A   
+DELAY10S . . . . .  C ADDR   004BH   A   
+DELAYLOOP. . . . .  C ADDR   0051H   A   
+DISPLAY_A. . . . .  B ADDR   00A0H.0 A   
+DISPLAY_B. . . . .  B ADDR   00A0H.1 A   
+DISPLAY_C. . . . .  B ADDR   00A0H.2 A   
+DISPLAY_D. . . . .  B ADDR   00A0H.3 A   
+FREEPARK . . . . .  C ADDR   0020H   A   
+FULLPARK . . . . .  C ADDR   0026H   A   
+GREEN. . . . . . .  B ADDR   0090H.0 A   
+INITVALS . . . . .  C ADDR   0000H   A   
+LOOPBACK . . . . .  C ADDR   0039H   A   
+MAINLOOP . . . . .  C ADDR   000CH   A   
+NEXTBIT. . . . . .  C ADDR   0016H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+RED. . . . . . . .  B ADDR   0090H.1 A   
+S1 . . . . . . . .  B ADDR   0080H.0 A   
+S2 . . . . . . . .  B ADDR   0080H.1 A   
+S3 . . . . . . . .  B ADDR   0080H.2 A   
+S4 . . . . . . . .  B ADDR   0080H.3 A   
+S5 . . . . . . . .  B ADDR   0080H.4 A   
+S6 . . . . . . . .  B ADDR   0080H.5 A   
+S7 . . . . . . . .  B ADDR   0080H.6 A   
+S8 . . . . . . . .  B ADDR   0080H.7 A   
+SENSOR . . . . . .  B ADDR   0090H.4 A   
+TESTBOT1 . . . . .  C ADDR   002CH   A   
+TESTBOT2 . . . . .  C ADDR   0034H   A   
+TESTBUTTONS. . . .  C ADDR   002CH   A   
+TF0. . . . . . . .  B ADDR   0088H.5 A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+YELLOW . . . . . .  B ADDR   0090H.2 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
