@@ -29,17 +29,17 @@ S8			BIT P0.7
 
 org	0000h
 InitVals:
-	mov 	P0, 0ffh			;Set the pins of the parking spots to 0
-	mov 	P1, 0ffh			;Actuators set to 0
-	mov 	P2, 0ffh 			;Display 0 at the begining
-	mov 	P3, 0ffh			;Interaction Peripherals set to 0
+	;mov 	P0, 0xff			;Set the pins of the parking spots to 0
+	mov 	P1, 0xff			;Actuators set to 0
+	mov 	P2, 0xff 			;Display 0 at the begining
+	mov 	P3, 0xff			;Interaction Peripherals set to 0
 
 MainLoop:
 	mov 	A, P0			;Park_states(accumulator)
 	mov 	r0, 0			;Occupied
 	
 countOccupied:
-	mov 	r1, 8			;Number of slots available
+	mov 	r1, #8			;Number of slots available
 countLoop:
 	rl 		A				;Rotate left to verify each bit L to R
 	jnc 	nextBit			;Skip if the bit is 0
@@ -47,7 +47,7 @@ countLoop:
 nextBit:
 	djnz 	r1, countLoop	;Decrement r1 and jump to loop if not 0
 	
-	mov 	A, 8			;8 slots to park
+	mov 	A, #8			;8 slots to park
 	clr 	C				;Clear the carry bit from RL
 	subb	A, r0			;Subtract r0 occupied from A 8 slots to get available_park
 	mov 	P2, A			;Present Display
@@ -87,7 +87,7 @@ awaitCar:					;Routine to detect if the car is in the sensor range to pass the b
 delay10s:
     push 	ACC         	;Save accumulator
     push 	PSW         	;Save program status word
-    mov 	R2, 200     	;200 intervals of 50 ms
+    mov 	R2, #200     	;200 intervals of 50 ms
 delayLoop:
     mov 	TMOD, 01h   	;Timer 0, Mode 1
     mov 	TH0, 0x3C   	;Load 50 ms delay

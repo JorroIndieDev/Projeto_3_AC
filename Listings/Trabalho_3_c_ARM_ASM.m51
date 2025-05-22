@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/21/2025  22:31:10  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/22/2025  11:51:00  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
@@ -20,7 +20,7 @@ LINK MAP OF MODULE:  .\Objects\Trabalho_3_c_ARM_ASM (PARKING_LOT)
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
-            CODE    0000H     006AH     ABSOLUTE     
+            CODE    0000H     0067H     ABSOLUTE     
 
 
 
@@ -31,25 +31,25 @@ SYMBOL TABLE OF MODULE:  .\Objects\Trabalho_3_c_ARM_ASM (PARKING_LOT)
 
   -------         MODULE        PARKING_LOT
   D:00E0H         SYMBOL        ACC
-  C:003BH         SYMBOL        AWAITCAR
+  C:0038H         SYMBOL        AWAITCAR
   B:0090H.3       SYMBOL        BARR
   B:00B0H.2       SYMBOL        BOT_1
   B:00B0H.3       SYMBOL        BOT_2
-  C:0012H         SYMBOL        COUNTLOOP
-  C:0010H         SYMBOL        COUNTOCCUPIED
-  C:004BH         SYMBOL        DELAY10S
-  C:0051H         SYMBOL        DELAYLOOP
+  C:000FH         SYMBOL        COUNTLOOP
+  C:000DH         SYMBOL        COUNTOCCUPIED
+  C:0048H         SYMBOL        DELAY10S
+  C:004EH         SYMBOL        DELAYLOOP
   B:00A0H.0       SYMBOL        DISPLAY_A
   B:00A0H.1       SYMBOL        DISPLAY_B
   B:00A0H.2       SYMBOL        DISPLAY_C
   B:00A0H.3       SYMBOL        DISPLAY_D
-  C:0020H         SYMBOL        FREEPARK
-  C:0026H         SYMBOL        FULLPARK
+  C:001DH         SYMBOL        FREEPARK
+  C:0023H         SYMBOL        FULLPARK
   B:0090H.0       SYMBOL        GREEN
   C:0000H         SYMBOL        INITVALS
-  C:0039H         SYMBOL        LOOPBACK
-  C:000CH         SYMBOL        MAINLOOP
-  C:0016H         SYMBOL        NEXTBIT
+  C:0036H         SYMBOL        LOOPBACK
+  C:0009H         SYMBOL        MAINLOOP
+  C:0013H         SYMBOL        NEXTBIT
   D:0080H         SYMBOL        P0
   D:0090H         SYMBOL        P1
   D:00A0H         SYMBOL        P2
@@ -59,7 +59,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\Trabalho_3_c_ARM_ASM (PARKING_LOT)
   B:0080H.0       SYMBOL        S1
   B:0080H.1       SYMBOL        S2
   B:0080H.2       SYMBOL        S3
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/21/2025  22:31:10  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/22/2025  11:51:00  PAGE 2
 
 
   B:0080H.3       SYMBOL        S4
@@ -68,75 +68,74 @@ SYMBOL TABLE OF MODULE:  .\Objects\Trabalho_3_c_ARM_ASM (PARKING_LOT)
   B:0080H.6       SYMBOL        S7
   B:0080H.7       SYMBOL        S8
   B:0090H.4       SYMBOL        SENSOR
-  C:002CH         SYMBOL        TESTBOT1
-  C:0034H         SYMBOL        TESTBOT2
-  C:002CH         SYMBOL        TESTBUTTONS
+  C:0029H         SYMBOL        TESTBOT1
+  C:0031H         SYMBOL        TESTBOT2
+  C:0029H         SYMBOL        TESTBUTTONS
   B:0088H.5       SYMBOL        TF0
   D:008CH         SYMBOL        TH0
   D:008AH         SYMBOL        TL0
   D:0089H         SYMBOL        TMOD
   B:0088H.4       SYMBOL        TR0
   B:0090H.2       SYMBOL        YELLOW
-  C:0000H         LINE#         32
-  C:0003H         LINE#         33
-  C:0006H         LINE#         34
-  C:0009H         LINE#         35
-  C:000CH         LINE#         38
-  C:000EH         LINE#         39
-  C:0010H         LINE#         42
-  C:0012H         LINE#         44
-  C:0013H         LINE#         45
-  C:0015H         LINE#         46
-  C:0016H         LINE#         48
-  C:0018H         LINE#         50
-  C:001AH         LINE#         51
-  C:001BH         LINE#         52
-  C:001CH         LINE#         53
-  C:001EH         LINE#         55
-  C:0020H         LINE#         58
-  C:0022H         LINE#         59
-  C:0024H         LINE#         60
-  C:0026H         LINE#         62
-  C:0028H         LINE#         63
-  C:002AH         LINE#         64
-  C:002CH         LINE#         68
-  C:002FH         LINE#         69
-  C:0032H         LINE#         70
-  C:0034H         LINE#         72
-  C:0037H         LINE#         73
-  C:0039H         LINE#         75
-  C:003BH         LINE#         78
-  C:003DH         LINE#         79
-  C:003FH         LINE#         80
-  C:0042H         LINE#         82
-  C:0045H         LINE#         83
-  C:0047H         LINE#         84
-  C:0049H         LINE#         85
-  C:004BH         LINE#         88
-  C:004DH         LINE#         89
-  C:004FH         LINE#         90
-  C:0051H         LINE#         92
-  C:0054H         LINE#         93
-  C:0057H         LINE#         94
-  C:005AH         LINE#         95
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/21/2025  22:31:10  PAGE 3
+  C:0000H         LINE#         33
+  C:0003H         LINE#         34
+  C:0006H         LINE#         35
+  C:0009H         LINE#         38
+  C:000BH         LINE#         39
+  C:000DH         LINE#         42
+  C:000FH         LINE#         44
+  C:0010H         LINE#         45
+  C:0012H         LINE#         46
+  C:0013H         LINE#         48
+  C:0015H         LINE#         50
+  C:0017H         LINE#         51
+  C:0018H         LINE#         52
+  C:0019H         LINE#         53
+  C:001BH         LINE#         55
+  C:001DH         LINE#         58
+  C:001FH         LINE#         59
+  C:0021H         LINE#         60
+  C:0023H         LINE#         62
+  C:0025H         LINE#         63
+  C:0027H         LINE#         64
+  C:0029H         LINE#         68
+  C:002CH         LINE#         69
+  C:002FH         LINE#         70
+  C:0031H         LINE#         72
+  C:0034H         LINE#         73
+  C:0036H         LINE#         75
+  C:0038H         LINE#         78
+  C:003AH         LINE#         79
+  C:003CH         LINE#         80
+  C:003FH         LINE#         82
+  C:0042H         LINE#         83
+  C:0044H         LINE#         84
+  C:0046H         LINE#         85
+  C:0048H         LINE#         88
+  C:004AH         LINE#         89
+  C:004CH         LINE#         90
+  C:004EH         LINE#         92
+  C:0051H         LINE#         93
+  C:0054H         LINE#         94
+  C:0057H         LINE#         95
+  C:0059H         LINE#         96
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/22/2025  11:51:00  PAGE 3
 
 
-  C:005CH         LINE#         96
-  C:005FH         LINE#         97
-  C:0061H         LINE#         98
-  C:0063H         LINE#         99
-  C:0065H         LINE#         100
-  C:0067H         LINE#         101
-  C:0069H         LINE#         102
+  C:005CH         LINE#         97
+  C:005EH         LINE#         98
+  C:0060H         LINE#         99
+  C:0062H         LINE#         100
+  C:0064H         LINE#         101
+  C:0066H         LINE#         102
   -------         ENDMOD        PARKING_LOT
 
 *** WARNING L7: MODULE NAME NOT UNIQUE
     MODULE:  .\Objects\Parking_Lot.obj (PARKING_LOT)
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 006AH BYTE ( 5%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0067H BYTE ( 5%) *
 ******************************************************************************
 
-Program Size: data=8.0 xdata=0 code=106
+Program Size: data=8.0 xdata=0 code=103
 LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)

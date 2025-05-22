@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  PARKING_LOT                                                          05/21/2025 22:31:09 PAGE     1
+A51 MACRO ASSEMBLER  PARKING_LOT                                                          05/22/2025 11:51:00 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
@@ -39,87 +39,87 @@ LOC  OBJ            LINE     SOURCE
                       29     
 0000                  30     org     0000h
 0000                  31     InitVals:
-0000 85FF80           32             mov     P0, 0ffh                        ;Set the pins of the parking spots to 0
-0003 85FF90           33             mov     P1, 0ffh                        ;Actuators set to 0
-0006 85FFA0           34             mov     P2, 0ffh                        ;Display 0 at the begining
-0009 85FFB0           35             mov     P3, 0ffh                        ;Interaction Peripherals set to 0
+                      32             ;mov    P0, 0xff                        ;Set the pins of the parking spots to 0
+0000 85FF90           33             mov     P1, 0xff                        ;Actuators set to 0
+0003 85FFA0           34             mov     P2, 0xff                        ;Display 0 at the begining
+0006 85FFB0           35             mov     P3, 0xff                        ;Interaction Peripherals set to 0
                       36     
-000C                  37     MainLoop:
-000C E580             38             mov     A, P0                   ;Park_states(accumulator)
-000E A800             39             mov     r0, 0                   ;Occupied
+0009                  37     MainLoop:
+0009 E580             38             mov     A, P0                   ;Park_states(accumulator)
+000B A800             39             mov     r0, 0                   ;Occupied
                       40             
-0010                  41     countOccupied:
-0010 A908             42             mov     r1, 8                   ;Number of slots available
-0012                  43     countLoop:
-0012 23               44             rl              A                               ;Rotate left to verify each bit L t
+000D                  41     countOccupied:
+000D 7908             42             mov     r1, #8                  ;Number of slots available
+000F                  43     countLoop:
+000F 23               44             rl              A                               ;Rotate left to verify each bit L t
                              o R
-0013 5001             45             jnc     nextBit                 ;Skip if the bit is 0
-0015 08               46             inc     r0                              ;Increment r0 occupied
-0016                  47     nextBit:
-0016 D9FA             48             djnz    r1, countLoop   ;Decrement r1 and jump to loop if not 0
+0010 5001             45             jnc     nextBit                 ;Skip if the bit is 0
+0012 08               46             inc     r0                              ;Increment r0 occupied
+0013                  47     nextBit:
+0013 D9FA             48             djnz    r1, countLoop   ;Decrement r1 and jump to loop if not 0
                       49             
-0018 E508             50             mov     A, 8                    ;8 slots to park
-001A C3               51             clr     C                               ;Clear the carry bit from RL
-001B 98               52             subb    A, r0                   ;Subtract r0 occupied from A 8 slots to get availab
+0015 7408             50             mov     A, #8                   ;8 slots to park
+0017 C3               51             clr     C                               ;Clear the carry bit from RL
+0018 98               52             subb    A, r0                   ;Subtract r0 occupied from A 8 slots to get availab
                              le_park
-001C F5A0             53             mov     P2, A                   ;Present Display
+0019 F5A0             53             mov     P2, A                   ;Present Display
                       54             
-001E 6006             55             jz              FullPark        ;If there are no slots its full jump to routine to 
-A51 MACRO ASSEMBLER  PARKING_LOT                                                          05/21/2025 22:31:09 PAGE     2
+001B 6006             55             jz              FullPark        ;If there are no slots its full jump to routine to 
+A51 MACRO ASSEMBLER  PARKING_LOT                                                          05/22/2025 11:51:00 PAGE     2
 
                              handle
                       56     
-0020                  57     FreePark:
-0020 D290             58             setb    Green                   ;Green light on
-0022 C291             59             clr     Red                             ;Red light off
-0024 8006             60             jmp     testButtons             ;Verify if the buttons are pressed
-0026                  61     FullPark:
-0026 C290             62             clr     Green                   ;Green light off
-0028 D291             63             setb    Red                             ;Red light on
-002A 8000             64             jmp     testButtons             ;Verify if the buttons are pressed
+001D                  57     FreePark:
+001D D290             58             setb    Green                   ;Green light on
+001F C291             59             clr     Red                             ;Red light off
+0021 8006             60             jmp     testButtons             ;Verify if the buttons are pressed
+0023                  61     FullPark:
+0023 C290             62             clr     Green                   ;Green light off
+0025 D291             63             setb    Red                             ;Red light on
+0027 8000             64             jmp     testButtons             ;Verify if the buttons are pressed
                       65                     
-002C                  66     testButtons:
-002C                  67     testBot1:
-002C 30B205           68             jnb             Bot_1, testBot2 ;Test button2 if button1 is off
-002F 309007           69             jnb             Green, LoopBack ;Ignore the rest if the Green Light is not one (mea
+0029                  66     testButtons:
+0029                  67     testBot1:
+0029 30B205           68             jnb             Bot_1, testBot2 ;Test button2 if button1 is off
+002C 309007           69             jnb             Green, LoopBack ;Ignore the rest if the Green Light is not one (mea
                              ning Red light is on, no space)
-0032 8007             70             jmp             awaitCar                ;Await the car to enter the sensor range
-0034                  71     testBot2:
-0034 30B302           72             jnb             Bot_2, LoopBack ;Ignore if button2 is not pressed
-0037 8002             73             jmp             awaitCar                ;Await the car to enter the sensor range
-0039                  74     LoopBack:
-0039 80D1             75             jmp     MainLoop                ;Loop back to continue reading the signals
+002F 8007             70             jmp             awaitCar                ;Await the car to enter the sensor range
+0031                  71     testBot2:
+0031 30B302           72             jnb             Bot_2, LoopBack ;Ignore if button2 is not pressed
+0034 8002             73             jmp             awaitCar                ;Await the car to enter the sensor range
+0036                  74     LoopBack:
+0036 80D1             75             jmp     MainLoop                ;Loop back to continue reading the signals
                       76     
-003B                  77     awaitCar:                                       ;Routine to detect if the car is in the sen
+0038                  77     awaitCar:                                       ;Routine to detect if the car is in the sen
                              sor range to pass the barrier
-003B D293             78             setb    Barr                    ;Set barrier on
-003D D292             79             setb    Yellow                  ;Yellow light on
-003F 3094FD           80             jnb             Sensor, $               ;Await sensor
+0038 D293             78             setb    Barr                    ;Set barrier on
+003A D292             79             setb    Yellow                  ;Yellow light on
+003C 3094FD           80             jnb             Sensor, $               ;Await sensor
                       81             ; Delay 10s
-0042 12004B           82             lcall   delay10s
-0045 C293             83             clr             Barr                    ;Set barrier off
-0047 C292             84             clr             Yellow                  ;Yellow light off
-0049 80EE             85             jmp             LoopBack
+003F 120048           82             lcall   delay10s
+0042 C293             83             clr             Barr                    ;Set barrier off
+0044 C292             84             clr             Yellow                  ;Yellow light off
+0046 80EE             85             jmp             LoopBack
                       86             
-004B                  87     delay10s:
-004B C0E0             88         push        ACC             ;Save accumulator
-004D C0D0             89         push        PSW             ;Save program status word
-004F AAC8             90         mov         R2, 200         ;200 intervals of 50 ms
-0051                  91     delayLoop:
-0051 850189           92         mov         TMOD, 01h       ;Timer 0, Mode 1
-0054 853C8C           93         mov         TH0, 0x3C       ;Load 50 ms delay
-0057 85B08A           94         mov         TL0, 0xB0
-005A D28C             95         setb        TR0             ;Start Timer 0
-005C 308DFD           96         jnb         TF0, $          ;Wait for overflow
-005F C28D             97         clr         TF0             ;Clear overflow flag
-0061 C28C             98         clr         TR0             ;Stop Timer 0
-0063 DAEC             99         djnz        R2, delayLoop   ;Decrement and loop if not zero
-0065 D0D0            100         pop         PSW             ;Restore PSW
-0067 D0E0            101         pop         ACC             ;Restore accumulator
-0069 22              102         RET
+0048                  87     delay10s:
+0048 C0E0             88         push        ACC             ;Save accumulator
+004A C0D0             89         push        PSW             ;Save program status word
+004C 7AC8             90         mov         R2, #200        ;200 intervals of 50 ms
+004E                  91     delayLoop:
+004E 850189           92         mov         TMOD, 01h       ;Timer 0, Mode 1
+0051 853C8C           93         mov         TH0, 0x3C       ;Load 50 ms delay
+0054 85B08A           94         mov         TL0, 0xB0
+0057 D28C             95         setb        TR0             ;Start Timer 0
+0059 308DFD           96         jnb         TF0, $          ;Wait for overflow
+005C C28D             97         clr         TF0             ;Clear overflow flag
+005E C28C             98         clr         TR0             ;Stop Timer 0
+0060 DAEC             99         djnz        R2, delayLoop   ;Decrement and loop if not zero
+0062 D0D0            100         pop         PSW             ;Restore PSW
+0064 D0E0            101         pop         ACC             ;Restore accumulator
+0066 22              102         RET
                      103     
                      104     END
-A51 MACRO ASSEMBLER  PARKING_LOT                                                          05/21/2025 22:31:09 PAGE     3
+A51 MACRO ASSEMBLER  PARKING_LOT                                                          05/22/2025 11:51:00 PAGE     3
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -128,25 +128,25 @@ SYMBOL TABLE LISTING
 N A M E             T Y P E  V A L U E   ATTRIBUTES
 
 ACC. . . . . . . .  D ADDR   00E0H   A   
-AWAITCAR . . . . .  C ADDR   003BH   A   
+AWAITCAR . . . . .  C ADDR   0038H   A   
 BARR . . . . . . .  B ADDR   0090H.3 A   
 BOT_1. . . . . . .  B ADDR   00B0H.2 A   
 BOT_2. . . . . . .  B ADDR   00B0H.3 A   
-COUNTLOOP. . . . .  C ADDR   0012H   A   
-COUNTOCCUPIED. . .  C ADDR   0010H   A   
-DELAY10S . . . . .  C ADDR   004BH   A   
-DELAYLOOP. . . . .  C ADDR   0051H   A   
+COUNTLOOP. . . . .  C ADDR   000FH   A   
+COUNTOCCUPIED. . .  C ADDR   000DH   A   
+DELAY10S . . . . .  C ADDR   0048H   A   
+DELAYLOOP. . . . .  C ADDR   004EH   A   
 DISPLAY_A. . . . .  B ADDR   00A0H.0 A   
 DISPLAY_B. . . . .  B ADDR   00A0H.1 A   
 DISPLAY_C. . . . .  B ADDR   00A0H.2 A   
 DISPLAY_D. . . . .  B ADDR   00A0H.3 A   
-FREEPARK . . . . .  C ADDR   0020H   A   
-FULLPARK . . . . .  C ADDR   0026H   A   
+FREEPARK . . . . .  C ADDR   001DH   A   
+FULLPARK . . . . .  C ADDR   0023H   A   
 GREEN. . . . . . .  B ADDR   0090H.0 A   
 INITVALS . . . . .  C ADDR   0000H   A   
-LOOPBACK . . . . .  C ADDR   0039H   A   
-MAINLOOP . . . . .  C ADDR   000CH   A   
-NEXTBIT. . . . . .  C ADDR   0016H   A   
+LOOPBACK . . . . .  C ADDR   0036H   A   
+MAINLOOP . . . . .  C ADDR   0009H   A   
+NEXTBIT. . . . . .  C ADDR   0013H   A   
 P0 . . . . . . . .  D ADDR   0080H   A   
 P1 . . . . . . . .  D ADDR   0090H   A   
 P2 . . . . . . . .  D ADDR   00A0H   A   
@@ -162,9 +162,9 @@ S6 . . . . . . . .  B ADDR   0080H.5 A
 S7 . . . . . . . .  B ADDR   0080H.6 A   
 S8 . . . . . . . .  B ADDR   0080H.7 A   
 SENSOR . . . . . .  B ADDR   0090H.4 A   
-TESTBOT1 . . . . .  C ADDR   002CH   A   
-TESTBOT2 . . . . .  C ADDR   0034H   A   
-TESTBUTTONS. . . .  C ADDR   002CH   A   
+TESTBOT1 . . . . .  C ADDR   0029H   A   
+TESTBOT2 . . . . .  C ADDR   0031H   A   
+TESTBUTTONS. . . .  C ADDR   0029H   A   
 TF0. . . . . . . .  B ADDR   0088H.5 A   
 TH0. . . . . . . .  D ADDR   008CH   A   
 TL0. . . . . . . .  D ADDR   008AH   A   
