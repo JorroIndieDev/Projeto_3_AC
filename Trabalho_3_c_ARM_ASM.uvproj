@@ -377,9 +377,9 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
-              <FileName>Parking_lot.c</FileName>
+              <FileName>Parking_lot_C.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Parking_lot.c</FilePath>
+              <FilePath>.\Parking_lot_C.c</FilePath>
             </File>
             <File>
               <FileName>Parking_Lot.a51</FileName>

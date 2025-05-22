@@ -194,8 +194,8 @@
       <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\Parking_lot.c</PathWithFileName>
-      <FilenameWithoutPath>Parking_lot.c</FilenameWithoutPath>
+      <PathWithFileName>.\Parking_lot_C.c</PathWithFileName>
+      <FilenameWithoutPath>Parking_lot_C.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -203,7 +203,7 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>2</FileNumber>
       <FileType>2</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\Parking_Lot.a51</PathWithFileName>
