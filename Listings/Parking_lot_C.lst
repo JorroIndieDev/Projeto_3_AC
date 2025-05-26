@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   PARKING_LOT_C                                                     05/22/2025 12:25:06 PAGE 1   
+C51 COMPILER V9.60.7.0   PARKING_LOT_C                                                     05/26/2025 17:42:53 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE PARKING_LOT_C
@@ -10,131 +10,145 @@ line level    source
 
    1          #include <reg51.h>
    2          
-   3          // Actuatures
-   4          sbit Green = P1^0;
-   5          sbit Red = P1^1;
-   6          sbit Yellow = P1^2;
-   7          sbit Barr = P1^3;
-   8          
-   9          // Sensors
-  10          sbit Bot_1 = P3^2;
-  11          sbit Bot_2 = P3^3;
-  12          sbit Sensor = P1^4;
-  13          
-  14          // Display
-  15          sbit Display_A = P2^0;
-  16          sbit Display_B = P2^1;
-  17          sbit Display_C = P2^2;
-  18          sbit Display_D = P2^3;
-  19          
-  20          // Sensor and LEDs on the parking spots
-  21          sbit S1_L1 = P0^0;
-  22          sbit S2_L2 = P0^1;
-  23          sbit S3_L3 = P0^2;
-  24          sbit S4_L4 = P0^3;
-  25          sbit S5_L5 = P0^4;
-  26          sbit S6_L6 = P0^5;
-  27          sbit S7_L7 = P0^6;
-  28          sbit S8_L8 = P0^7;
-  29          
-  30          unsigned int park_states; // unsingned chr 8 bits, meaning P0.0 .. P0.7
-  31          unsigned int occupied;  // occupied slots in the parking lot
-  32          unsigned int available_park;  // how many slots are not occupied
-  33          unsigned int i; // increment for counter in for loop (errors occur if the variable is declared inside the 
+   3          
+   4          #define second 5000 // 5000 ticks * 200us = 1s
+   5          #define servoZero 3   // servo zero, starting pos = 3 * 200us = 600us
+   6          #define downTime 10 // 10 ticks * 200us = 20ms
+   7          // Actuatures
+   8          sbit Green = P1^0;
+   9          sbit Red = P1^1;
+  10          sbit Yellow = P1^2;
+  11          sbit Barr = P1^3;
+  12          
+  13          // Sensors
+  14          sbit Bot_1 = P3^2;
+  15          sbit Bot_2 = P3^3;
+  16          sbit Sensor = P1^4;
+  17          
+  18          // Display
+  19          sbit Display_A = P2^0;
+  20          sbit Display_B = P2^1;
+  21          sbit Display_C = P2^2;
+  22          sbit Display_D = P2^3;
+  23          
+  24          // Sensor and LEDs on the parking spots
+  25          sbit S1_L1 = P0^0;
+  26          sbit S2_L2 = P0^1;
+  27          sbit S3_L3 = P0^2;
+  28          sbit S4_L4 = P0^3;
+  29          sbit S5_L5 = P0^4;
+  30          sbit S6_L6 = P0^5;
+  31          sbit S7_L7 = P0^6;
+  32          sbit S8_L8 = P0^7;
+  33          
+  34          unsigned int park_states; // unsingned chr 8 bits, meaning P0.0 .. P0.7
+  35          unsigned int Free;  // Free slots in the parking lot
+  36          unsigned int i; // increment for counter in for loop (errors occur if the variable is declared inside the 
              -loop)
-  34          
-  35          
-  36          void awaitCar();
-  37          void delay_10s();
+  37          
   38          
-  39          void main(){
-  40   1        // _init_ the pins
-  41   1        P0 = 0xff;
-  42   1        P1 = 0xff;
-  43   1        P2 = 0xff;
-  44   1        P3 = 0xff;
-  45   1        
-  46   1        while(1){   // main loop
-  47   2          park_states = P0; // assign P0 to a readable var
-  48   2          
-  49   2          // verify the available parking spots and sends it o the Display
-  50   2          occupied = 0;
-  51   2          
-  52   2          for(i = 0; i < 8; i++){ // loop through the 8 slots and increment occupied if any 0 is detected
-  53   3            // if park_states and bit[i], then a spot is occupied and 
-C51 COMPILER V9.60.7.0   PARKING_LOT_C                                                     05/22/2025 12:25:06 PAGE 2   
+  39          void awaitCar(void);
+  40          void delayTicks(unsigned int ticks);
+  41          void blinker();
+  42          
+  43          void main(void){
+  44   1        // _init_ the pins
+  45   1        P0 = 0xff;
+  46   1        P1 = 0xff;
+  47   1        P2 = 0x00;
+  48   1        P3 = 0xff;
+  49   1        delayTicks(servoZero);
+  50   1        Barr = 0;
+  51   1        
+  52   1        while(1){   // main loop
+  53   2          park_states = P0; // assign P0 to a readable var
+C51 COMPILER V9.60.7.0   PARKING_LOT_C                                                     05/26/2025 17:42:53 PAGE 2   
 
-  54   3            // i is the occupied slot.
-  55   3            if(park_states & (1 << i)){
-  56   4              occupied++;
-  57   4            }
-  58   3          }
-  59   2      
-  60   2          available_park = 8 - occupied;  // results in the display code for the decoder
-  61   2          available_park &= 0x0f; // keeps at 4 bits since the full 8 are not used (a sort of clamp)
-  62   2          P2 = available_park; // This sends only the 4 bits necessary for the Display A-D
-  63   2          // at this point in the program runing the first time no alteratino to any input the display pins should
+  54   2          
+  55   2          // verify the available parking spots and sends it o the Display
+  56   2          Free = 0;
+  57   2          
+  58   2          for(i = 0; i < 8; i++){ // loop through the 8 slots and increment occupied if any 0 is detected
+  59   3            // if park_states and bit[i], then a spot is occupied and 
+  60   3            // i is the occupied slot.
+  61   3            if(park_states & (1 << i)){ // park_states AND 1 << [i] <- i.e (0000 0100) & (1 << [3]) = true (1 << [3
+             -]) = 100
+  62   4              Free += 1;
+  63   4            }
+  64   3          }
+  65   2      
+  66   2          P2 = Free; // This sends only the 4 bits necessary for the Display A-D
+  67   2          // at this point in the program runing the first time no alteratino to any input the display pins should
              - be 0000 1000 = 8
-  64   2          // if there are any parking slots available Green else Red
-  65   2          if(available_park > 0){
-  66   3            Green = 1;
-  67   3            Red = 0;
-  68   3          } else {
-  69   3            Green = 0;
-  70   3            Red = 1;
-  71   3          }
-  72   2          // assuming from the assignment there is only one way to enter / exit
-  73   2          // all buttons in the diagram activate on a low(0) so !Bot
-  74   2          if(!Bot_1 & Green){ // if button 1 -> entry Light must be green also
-  75   3            awaitCar();
-  76   3          } else if(!Bot_2){  // if button 2 -> exit light does not matter 
-  77   3            awaitCar();
-  78   3          }
-  79   2          
-  80   2        }
-  81   1        
-  82   1      }
-  83          
-  84          void awaitCar(){
-  85   1        Barr = 1;
-  86   1        Yellow = 1;
-  87   1        while(!Sensor);// await sensor response
-  88   1        delay_10s();
-  89   1        Barr = 0;
-  90   1        Yellow = 0;
-  91   1      
-  92   1      }
-  93          
-  94          void delay_10s(){
-  95   1        unsigned int intervals = 200; // 200 & 50ms = 10s
-  96   1        
-  97   1        TMOD = (TMOD & 0xf0) | 0x01;  // configuration of the built in timer 0
-  98   1        
-  99   1        while(intervals > 0){
- 100   2          // 0x3cb0
- 101   2          TH0 = 0x3c; // low byte
- 102   2          TL0 = 0xb0; // high byte
- 103   2          
- 104   2          TR0 = 1; // start the timer
- 105   2          
- 106   2          while(!TF0); // await overflow ?
- 107   2          
- 108   2          TF0 = 0;
- 109   2          TR0 = 0;
- 110   2          
- 111   2          intervals--;
- 112   2        }
- 113   1      }
+  68   2          // if there are any parking slots available Green else Red
+  69   2          if(Free != 0){
+  70   3            Green = 0;
+  71   3            Red = 1;
+  72   3          } else {
+  73   3            Green = 1;
+  74   3            Red = 0;
+  75   3          }
+  76   2      
+  77   2          // assuming from the assignment there is only one way to enter / exit
+  78   2          // all buttons in the diagram activate on a low(0) so !Bot
+  79   2          if((Bot_1 == 0 )& !Green){  // if button 1 -> entry Light must be green also
+  80   3            awaitCar();
+  81   3          } else if(Bot_2 == 0){  // if button 2 -> exit light does not matter 
+  82   3            awaitCar();
+  83   3          }
+  84   2          
+  85   2        }
+  86   1        
+  87   1      }
+  88          
+  89          void awaitCar(void){
+  90   1        while(Sensor == 1);// await sensor response
+  91   1        Barr = 1;
+  92   1        while(Sensor == 0){blinker();}// if there is a car there wait
+  93   1        for(i = 0;i < 10;i++){
+  94   2          delayTicks(second);
+  95   2        }
+  96   1        Barr = 0;
+  97   1        Yellow = 1;
+  98   1      
+  99   1      }
+ 100          
+ 101          void blinker(void){
+ 102   1        Yellow = 0;
+ 103   1        delayTicks(downTime);
+ 104   1        Yellow = 1;
+ 105   1      }
+ 106          
+ 107          void delayTicks(unsigned int ticks) {
+ 108   1          unsigned int i;
+ 109   1          
+ 110   1          TMOD = (TMOD & 0xF0) | 0x01;  // Use Timer0 in Mode 1 (16-bit)
+ 111   1        
+ 112   1          for (i = 0; i < ticks; i++) {
+ 113   2              // Each loop = 200us delay
+C51 COMPILER V9.60.7.0   PARKING_LOT_C                                                     05/26/2025 17:42:53 PAGE 3   
 
-C51 COMPILER V9.60.7.0   PARKING_LOT_C                                                     05/22/2025 12:25:06 PAGE 3   
+ 114   2              // Timer0 value = 65536 - 200 = 65336 ? 0xFF38
+ 115   2              TH0 = 0xFF;  // High byte
+ 116   2              TL0 = 0x38;  // Low byte (0xFF38 = 65528 = 8 ticks, but close enough for 200us with 12MHz)
+ 117   2      
+ 118   2              TF0 = 0;     // Clear overflow flag
+ 119   2              TR0 = 1;     // Start Timer0
+ 120   2      
+ 121   2              while (!TF0); // Wait for timer overflow
+ 122   2      
+ 123   2              TR0 = 0;     // Stop Timer0
+ 124   2              TF0 = 0;     // Clear flag again (optional)
+ 125   2          }
+ 126   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    190    ----
+   CODE SIZE        =    241    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      8    ----
+   DATA SIZE        =      6    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

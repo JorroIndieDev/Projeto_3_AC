@@ -1,5 +1,9 @@
 #include <reg51.h>
 
+
+#define second 5000	// 5000 ticks * 200us = 1s
+#define servoZero 3		// servo zero, starting pos = 3 * 200us = 600us
+#define downTime 10	// 10 ticks * 200us = 20ms
 // Actuatures
 sbit Green = P1^0;
 sbit Red = P1^1;
@@ -28,52 +32,53 @@ sbit S7_L7 = P0^6;
 sbit S8_L8 = P0^7;
 
 unsigned int park_states;	// unsingned chr 8 bits, meaning P0.0 .. P0.7
-unsigned int occupied;	// occupied slots in the parking lot
-unsigned int available_park;	// how many slots are not occupied
+unsigned int Free;	// Free slots in the parking lot
 unsigned int i;	// increment for counter in for loop (errors occur if the variable is declared inside the loop)
 
 
-void awaitCar();
-void delay_10s();
+void awaitCar(void);
+void delayTicks(unsigned int ticks);
+void blinker();
 
-void main(){
+void main(void){
 	// _init_ the pins
 	P0 = 0xff;
 	P1 = 0xff;
-	P2 = 0xff;
+	P2 = 0x00;
 	P3 = 0xff;
+	delayTicks(servoZero);
+	Barr = 0;
 	
 	while(1){		// main loop
 		park_states = P0; // assign P0 to a readable var
 		
 		// verify the available parking spots and sends it o the Display
-		occupied = 0;
+		Free = 0;
 		
 		for(i = 0; i < 8; i++){	// loop through the 8 slots and increment occupied if any 0 is detected
 			// if park_states and bit[i], then a spot is occupied and 
 			// i is the occupied slot.
 			if(park_states & (1 << i)){	// park_states AND 1 << [i] <- i.e (0000 0100) & (1 << [3]) = true (1 << [3]) = 100
-				occupied++;
+				Free += 1;
 			}
 		}
 
-		available_park = 8 - occupied;	// results in the display code for the decoder
-		available_park &= 0x0f;	// keeps at 4 bits since the full 8 are not used (a sort of clamp)
-		P2 = available_park; // This sends only the 4 bits necessary for the Display A-D
+		P2 = Free; // This sends only the 4 bits necessary for the Display A-D
 		// at this point in the program runing the first time no alteratino to any input the display pins should be 0000 1000 = 8
 		// if there are any parking slots available Green else Red
-		if(available_park > 0){
-			Green = 1;
-			Red = 0;
-		} else {
+		if(Free != 0){
 			Green = 0;
 			Red = 1;
+		} else {
+			Green = 1;
+			Red = 0;
 		}
+
 		// assuming from the assignment there is only one way to enter / exit
 		// all buttons in the diagram activate on a low(0) so !Bot
-		if(!Bot_1 & Green){	// if button 1 -> entry Light must be green also
+		if((Bot_1 == 0 )& !Green){	// if button 1 -> entry Light must be green also
 			awaitCar();
-		} else if(!Bot_2){	// if button 2 -> exit light does not matter 
+		} else if(Bot_2 == 0){	// if button 2 -> exit light does not matter 
 			awaitCar();
 		}
 		
@@ -81,33 +86,41 @@ void main(){
 	
 }
 
-void awaitCar(){
+void awaitCar(void){
+	while(Sensor == 1);// await sensor response
 	Barr = 1;
-	Yellow = 1;
-	while(!Sensor);// await sensor response
-	delay_10s();
+	while(Sensor == 0){blinker();}// if there is a car there wait
+	for(i = 0;i < 10;i++){
+		delayTicks(second);
+	}
 	Barr = 0;
-	Yellow = 0;
+	Yellow = 1;
 
 }
 
-void delay_10s(){
-	unsigned int intervals = 200;	// 200 & 50ms = 10s
+void blinker(void){
+	Yellow = 0;
+	delayTicks(downTime);
+	Yellow = 1;
+}
+
+void delayTicks(unsigned int ticks) {
+    unsigned int i;
+    
+    TMOD = (TMOD & 0xF0) | 0x01;  // Use Timer0 in Mode 1 (16-bit)
 	
-	TMOD = (TMOD & 0xf0) | 0x01;	// configuration of the built in timer 0
-	
-	while(intervals > 0){
-		// 0x3cb0
-		TH0 = 0x3c;	// low byte
-		TL0 = 0xb0;	// high byte
-		
-		TR0 = 1; // start the timer
-		
-		while(!TF0); // await overflow ?
-		
-		TF0 = 0;
-		TR0 = 0;
-		
-		intervals--;
-	}
+    for (i = 0; i < ticks; i++) {
+        // Each loop = 200us delay
+        // Timer0 value = 65536 - 200 = 65336 ? 0xFF38
+				TH0 = 0xFF;  // High byte
+        TL0 = 0x38;  // Low byte (0xFF38 = 65528 = 8 ticks, but close enough for 200us with 12MHz)
+
+        TF0 = 0;     // Clear overflow flag
+        TR0 = 1;     // Start Timer0
+
+        while (!TF0); // Wait for timer overflow
+
+        TR0 = 0;     // Stop Timer0
+        TF0 = 0;     // Clear flag again (optional)
+    }
 }

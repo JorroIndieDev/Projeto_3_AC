@@ -49,7 +49,7 @@
           <OutputName>Trabalho_3_c_ARM_ASM</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Listings\</ListingPath>
@@ -233,7 +233,7 @@
               <RCB>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <Size>0xffff</Size>
               </RCB>
               <RXB>
                 <Type>0</Type>
@@ -380,11 +380,6 @@
               <FileName>Parking_lot_C.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Parking_lot_C.c</FilePath>
-            </File>
-            <File>
-              <FileName>Parking_Lot.a51</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\Parking_Lot.a51</FilePath>
             </File>
           </Files>
         </Group>

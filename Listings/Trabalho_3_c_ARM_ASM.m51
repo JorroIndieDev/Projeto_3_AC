@@ -1,9 +1,9 @@
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/22/2025  12:25:06  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/26/2025  17:45:13  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
-C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\Parking_lot_C.obj, .\Objects\Parking_Lot.obj TO .\Objects\Trabalho_3_c_ARM_ASM PRI
->> NT (.\Listings\Trabalho_3_c_ARM_ASM.m51)
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\Parking_lot_C.obj TO .\Objects\Trabalho_3_c_ARM_ASM PRINT (.\Listings\Trabalho_3_c
+>> _ARM_ASM.m51)
 
 
 MEMORY MODEL: SMALL
@@ -11,7 +11,6 @@ MEMORY MODEL: SMALL
 
 INPUT MODULES INCLUDED:
   .\Objects\Parking_lot_C.obj (PARKING_LOT_C)
-  .\Objects\Parking_Lot.obj (PARKING_LOT)
   C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
 
 
@@ -23,17 +22,17 @@ LINK MAP OF MODULE:  .\Objects\Trabalho_3_c_ARM_ASM (PARKING_LOT_C)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-            DATA    0008H     0008H     UNIT         ?DT?PARKING_LOT_C
-            IDATA   0010H     0001H     UNIT         ?STACK
+            DATA    0008H     0006H     UNIT         ?DT?PARKING_LOT_C
+            IDATA   000EH     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
-            CODE    0000H     0067H     ABSOLUTE     
-* OVERLAP * CODE    0000H     0003H     ABSOLUTE     
-                    0067H     0799H                  *** GAP ***
-            CODE    0800H     008AH     UNIT         ?PR?MAIN?PARKING_LOT_C
-            CODE    088AH     0025H     UNIT         ?PR?DELAY_10S?PARKING_LOT_C
-            CODE    08AFH     000FH     UNIT         ?PR?AWAITCAR?PARKING_LOT_C
-            CODE    08BEH     000CH     UNIT         ?C_C51STARTUP
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     008BH     UNIT         ?PR?MAIN?PARKING_LOT_C
+            CODE    088BH     002FH     UNIT         ?PR?AWAITCAR?PARKING_LOT_C
+            CODE    08BAH     002BH     UNIT         ?PR?_DELAYTICKS?PARKING_LOT_C
+            CODE    08E5H     000CH     UNIT         ?PR?BLINKER?PARKING_LOT_C
+            CODE    08F1H     000CH     UNIT         ?C_C51STARTUP
 
 
 
@@ -47,20 +46,25 @@ SEGMENT
   +--> ?PR?MAIN?PARKING_LOT_C
 
 ?PR?MAIN?PARKING_LOT_C
+  +--> ?PR?_DELAYTICKS?PARKING_LOT_C
   +--> ?PR?AWAITCAR?PARKING_LOT_C
 
 ?PR?AWAITCAR?PARKING_LOT_C
-  +--> ?PR?DELAY_10S?PARKING_LOT_C
+  +--> ?PR?BLINKER?PARKING_LOT_C
+  +--> ?PR?_DELAYTICKS?PARKING_LOT_C
+
+?PR?BLINKER?PARKING_LOT_C
+  +--> ?PR?_DELAYTICKS?PARKING_LOT_C
 
 
 
 SYMBOL TABLE OF MODULE:  .\Objects\Trabalho_3_c_ARM_ASM (PARKING_LOT_C)
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/26/2025  17:45:13  PAGE 2
+
+
 
   VALUE           TYPE          NAME
   ----------------------------------
-
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/22/2025  12:25:06  PAGE 2
-
 
   -------         MODULE        PARKING_LOT_C
   C:0000H         SYMBOL        _ICE_DUMMY_
@@ -69,196 +73,100 @@ SYMBOL TABLE OF MODULE:  .\Objects\Trabalho_3_c_ARM_ASM (PARKING_LOT_C)
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
   D:00B0H         PUBLIC        P3
+  D:0008H         PUBLIC        Free
   B:0090H.3       PUBLIC        Barr
+  C:08BAH         PUBLIC        _delayTicks
   B:0090H.1       PUBLIC        Red
   C:0800H         PUBLIC        main
-  D:0008H         PUBLIC        park_states
-  C:08AFH         PUBLIC        awaitCar
+  D:000AH         PUBLIC        park_states
+  C:088BH         PUBLIC        awaitCar
   D:0089H         PUBLIC        TMOD
   B:00B0H.2       PUBLIC        Bot_1
-  D:000AH         PUBLIC        available_park
   B:00B0H.3       PUBLIC        Bot_2
-  C:088AH         PUBLIC        delay_10s
   B:0088H.5       PUBLIC        TF0
   D:008CH         PUBLIC        TH0
   D:008AH         PUBLIC        TL0
-  D:000CH         PUBLIC        occupied
   B:0088H.4       PUBLIC        TR0
-  D:000EH         PUBLIC        i
+  D:000CH         PUBLIC        i
+  C:08E5H         PUBLIC        blinker
   B:0090H.0       PUBLIC        Green
   B:0090H.4       PUBLIC        Sensor
   -------         PROC          MAIN
-  C:0800H         LINE#         39
-  C:0800H         LINE#         41
-  C:0803H         LINE#         42
-  C:0806H         LINE#         43
-  C:0809H         LINE#         44
-  C:080CH         LINE#         46
-  C:080CH         LINE#         47
-  C:0813H         LINE#         50
-  C:0818H         LINE#         52
-  C:081CH         LINE#         55
-  C:0837H         LINE#         56
-  C:083FH         LINE#         57
-  C:083FH         LINE#         58
-  C:084DH         LINE#         60
-  C:0859H         LINE#         61
-  C:085FH         LINE#         62
-  C:0862H         LINE#         65
-  C:086DH         LINE#         66
-  C:086FH         LINE#         67
-  C:0871H         LINE#         68
-  C:0873H         LINE#         69
-  C:0875H         LINE#         70
-  C:0877H         LINE#         71
-  C:0877H         LINE#         74
-  C:087DH         LINE#         75
-  C:0880H         LINE#         76
-  C:0885H         LINE#         77
-  C:0888H         LINE#         78
-  C:0888H         LINE#         80
+  C:0800H         LINE#         43
+  C:0800H         LINE#         45
+  C:0803H         LINE#         46
+  C:0806H         LINE#         47
+  C:0809H         LINE#         48
+  C:080CH         LINE#         49
+  C:0812H         LINE#         50
+  C:0814H         LINE#         52
+  C:0814H         LINE#         53
+  C:081BH         LINE#         56
+  C:0820H         LINE#         58
+  C:0824H         LINE#         61
+  C:083FH         LINE#         62
+  C:0847H         LINE#         63
+  C:0847H         LINE#         64
+  C:0855H         LINE#         66
+  C:0858H         LINE#         69
+  C:085EH         LINE#         70
+  C:0860H         LINE#         71
+  C:0862H         LINE#         72
+  C:0864H         LINE#         73
+  C:0866H         LINE#         74
+  C:0868H         LINE#         75
+  C:0868H         LINE#         79
+  C:087EH         LINE#         80
+  C:0881H         LINE#         81
+  C:0886H         LINE#         82
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/26/2025  17:45:13  PAGE 3
+
+
+  C:0889H         LINE#         83
+  C:0889H         LINE#         85
   -------         ENDPROC       MAIN
   -------         PROC          AWAITCAR
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/22/2025  12:25:06  PAGE 3
-
-
-  C:08AFH         LINE#         84
-  C:08AFH         LINE#         85
-  C:08B1H         LINE#         86
-  C:08B3H         LINE#         87
-  C:08B6H         LINE#         88
-  C:08B9H         LINE#         89
-  C:08BBH         LINE#         90
-  C:08BDH         LINE#         92
+  C:088BH         LINE#         89
+  C:088BH         LINE#         90
+  C:088EH         LINE#         91
+  C:0890H         LINE#         92
+  C:0898H         LINE#         93
+  C:089DH         LINE#         94
+  C:08A4H         LINE#         95
+  C:08B5H         LINE#         96
+  C:08B7H         LINE#         97
+  C:08B9H         LINE#         99
   -------         ENDPROC       AWAITCAR
-  -------         PROC          DELAY_10S
+  -------         PROC          BLINKER
+  C:08E5H         LINE#         101
+  C:08E5H         LINE#         102
+  C:08E7H         LINE#         103
+  C:08EEH         LINE#         104
+  C:08F0H         LINE#         105
+  -------         ENDPROC       BLINKER
+  -------         PROC          _DELAYTICKS
+  D:0006H         SYMBOL        ticks
   -------         DO            
-  D:0006H         SYMBOL        intervals
+  D:0004H         SYMBOL        i
   -------         ENDDO         
-  C:088AH         LINE#         94
-  C:088AH         LINE#         95
-  C:088EH         LINE#         97
-  C:0896H         LINE#         99
-  C:0896H         LINE#         101
-  C:0899H         LINE#         102
-  C:089CH         LINE#         104
-  C:089EH         LINE#         106
-  C:08A1H         LINE#         108
-  C:08A3H         LINE#         109
-  C:08A5H         LINE#         111
-  C:08AAH         LINE#         112
-  C:08AEH         LINE#         113
-  -------         ENDPROC       DELAY_10S
+  C:08BAH         LINE#         107
+  C:08BAH         LINE#         110
+  C:08C2H         LINE#         112
+  C:08CCH         LINE#         115
+  C:08CFH         LINE#         116
+  C:08D2H         LINE#         118
+  C:08D4H         LINE#         119
+  C:08D6H         LINE#         121
+  C:08D9H         LINE#         123
+  C:08DBH         LINE#         124
+  C:08DDH         LINE#         125
+  C:08E4H         LINE#         126
+  -------         ENDPROC       _DELAYTICKS
   -------         ENDMOD        PARKING_LOT_C
 
-  -------         MODULE        PARKING_LOT
-  D:00E0H         SYMBOL        ACC
-  C:0038H         SYMBOL        AWAITCAR
-  B:0090H.3       SYMBOL        BARR
-  B:00B0H.2       SYMBOL        BOT_1
-  B:00B0H.3       SYMBOL        BOT_2
-  C:000FH         SYMBOL        COUNTLOOP
-  C:000DH         SYMBOL        COUNTOCCUPIED
-  C:0048H         SYMBOL        DELAY10S
-  C:004EH         SYMBOL        DELAYLOOP
-  B:00A0H.0       SYMBOL        DISPLAY_A
-  B:00A0H.1       SYMBOL        DISPLAY_B
-  B:00A0H.2       SYMBOL        DISPLAY_C
-  B:00A0H.3       SYMBOL        DISPLAY_D
-  C:001DH         SYMBOL        FREEPARK
-  C:0023H         SYMBOL        FULLPARK
-  B:0090H.0       SYMBOL        GREEN
-  C:0000H         SYMBOL        INITVALS
-  C:0036H         SYMBOL        LOOPBACK
-  C:0009H         SYMBOL        MAINLOOP
-  C:0013H         SYMBOL        NEXTBIT
-  D:0080H         SYMBOL        P0
-  D:0090H         SYMBOL        P1
-  D:00A0H         SYMBOL        P2
-  D:00B0H         SYMBOL        P3
-  D:00D0H         SYMBOL        PSW
-  B:0090H.1       SYMBOL        RED
-  B:0080H.0       SYMBOL        S1
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/22/2025  12:25:06  PAGE 4
-
-
-  B:0080H.1       SYMBOL        S2
-  B:0080H.2       SYMBOL        S3
-  B:0080H.3       SYMBOL        S4
-  B:0080H.4       SYMBOL        S5
-  B:0080H.5       SYMBOL        S6
-  B:0080H.6       SYMBOL        S7
-  B:0080H.7       SYMBOL        S8
-  B:0090H.4       SYMBOL        SENSOR
-  C:0029H         SYMBOL        TESTBOT1
-  C:0031H         SYMBOL        TESTBOT2
-  C:0029H         SYMBOL        TESTBUTTONS
-  B:0088H.5       SYMBOL        TF0
-  D:008CH         SYMBOL        TH0
-  D:008AH         SYMBOL        TL0
-  D:0089H         SYMBOL        TMOD
-  B:0088H.4       SYMBOL        TR0
-  B:0090H.2       SYMBOL        YELLOW
-  C:0000H         LINE#         33
-  C:0003H         LINE#         34
-  C:0006H         LINE#         35
-  C:0009H         LINE#         38
-  C:000BH         LINE#         39
-  C:000DH         LINE#         42
-  C:000FH         LINE#         44
-  C:0010H         LINE#         45
-  C:0012H         LINE#         46
-  C:0013H         LINE#         48
-  C:0015H         LINE#         50
-  C:0017H         LINE#         51
-  C:0018H         LINE#         52
-  C:0019H         LINE#         53
-  C:001BH         LINE#         55
-  C:001DH         LINE#         58
-  C:001FH         LINE#         59
-  C:0021H         LINE#         60
-  C:0023H         LINE#         62
-  C:0025H         LINE#         63
-  C:0027H         LINE#         64
-  C:0029H         LINE#         68
-  C:002CH         LINE#         69
-  C:002FH         LINE#         70
-  C:0031H         LINE#         72
-  C:0034H         LINE#         73
-  C:0036H         LINE#         75
-  C:0038H         LINE#         78
-  C:003AH         LINE#         79
-  C:003CH         LINE#         80
-  C:003FH         LINE#         82
-  C:0042H         LINE#         83
-  C:0044H         LINE#         84
-  C:0046H         LINE#         85
-  C:0048H         LINE#         88
-  C:004AH         LINE#         89
-  C:004CH         LINE#         90
-  C:004EH         LINE#         92
-  C:0051H         LINE#         93
-  C:0054H         LINE#         94
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/22/2025  12:25:06  PAGE 5
-
-
-  C:0057H         LINE#         95
-  C:0059H         LINE#         96
-  C:005CH         LINE#         97
-  C:005EH         LINE#         98
-  C:0060H         LINE#         99
-  C:0062H         LINE#         100
-  C:0064H         LINE#         101
-  C:0066H         LINE#         102
-  -------         ENDMOD        PARKING_LOT
-
-*** WARNING L5: CODE SPACE MEMORY OVERLAP
-    FROM:    0000H
-    TO:      0066H
-
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0125H BYTE (14%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00F1H BYTE (11%) *
 ******************************************************************************
 
-Program Size: data=17.0 xdata=0 code=308
-LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
+Program Size: data=15.0 xdata=0 code=256
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
